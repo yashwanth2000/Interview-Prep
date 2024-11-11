@@ -135,7 +135,7 @@ console.log({} == {}); // false
 console.log({} === {}); // false
 ```
 ---
-## 3. Function Properties
+## 5. Function Properties
 
 ### Question
 What happens when you try to access and modify properties on a function, and why do you see different values in the console?
@@ -167,7 +167,7 @@ t1();              // Output: 200
 ```
 ---
 
-## 5. Spread Operator and Object Copy
+## 6. Spread Operator and Object Copy
 
 ### Question
 How does the spread operator create copies of objects and what happens when modifying the copied object?
@@ -192,7 +192,7 @@ console.log(a.name, b.name); // syc yash
 
 ---
 
-## 6. Number Comparisons and Types
+## 7. Number Comparisons and Types
 
 ### Question
 How does JavaScript compare different number representations using strict equality?
@@ -217,7 +217,7 @@ console.log(x === z);     // true (same type and value)
 
 ---
 
-## 7. Object Comparison
+## 8. Object Comparison
 
 ### Question
 How does JavaScript compare objects and their properties?
@@ -245,7 +245,7 @@ function test2(record) {
 ```
 ---
 
-## 8. Type Coercion Operations
+## 9. Type Coercion Operations
 
 ### Question
 How do unary plus and logical NOT operators work with different types?
@@ -263,7 +263,7 @@ console.log(!"abc");  // false (non-empty string is truthy)
 ```
 ---
 
-## 9. Object Property Access
+## 10. Object Property Access
 
 ### Question
 How are object properties accessed and what happens when objects are used as keys?
@@ -289,7 +289,7 @@ console.log(r.key);   // "r"
 ```
 ---
 
-## 10. Boolean Arithmetic
+## 11. Boolean Arithmetic
 
 ### Question
 How does JavaScript handle arithmetic operations with boolean values?
