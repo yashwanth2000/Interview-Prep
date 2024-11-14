@@ -480,3 +480,175 @@ window.addEventListener("load", async () => {
   - Promise rejected: button clicked
 
 ---
+## 14. `var` vs `let` in Loops
+
+### Question
+Explain the difference between using `var` and `let` in JavaScript loops, particularly in asynchronous functions like `setTimeout`.
+
+### `var` vs `let` in Loops
+
+| Keyword | Behavior in Loop Scope                                | Behavior in `setTimeout` Example       | Output (for `setTimeout` example) |
+|---------|-------------------------------------------------------|----------------------------------------|-----------------------------------|
+| **`var`** | `var` declares variables globally or function-scoped, meaning it does not have block scope. | When used in a loop with `setTimeout`, all callbacks access the same `i` value after the loop completes. | `3, 3, 3` |
+| **`let`** | `let` declares variables with block scope, so each iteration of the loop gets a unique `i` value. | Each callback created by `setTimeout` captures its own `i` value from the loop iteration. | `0, 1, 2` |
+
+#### Explanation
+
+- **`var` in Loops:**  
+  Since `var` is function-scoped, it does not create a new variable for each iteration. Instead, the same `i` variable is shared across all iterations. By the time the `setTimeout` callbacks execute, the loop has finished, so `i` is equal to `3` in all callbacks.
+
+- **`let` in Loops:**  
+  Using `let` creates a new, block-scoped `i` variable for each iteration, so each `setTimeout` callback refers to the `i` value from its specific loop iteration. This results in the expected sequence of `0, 1, 2`.
+
+```javascript
+// Example with `var` (outputs: 3, 3, 3)
+for(var i = 0; i < 3; i++) {
+    setTimeout(() => {
+        console.log(i);
+    }, 1000 + i);
+}
+
+// Example with `let` (outputs: 0, 1, 2)
+for(let i = 0; i < 3; i++) {
+    setTimeout(() => {
+        console.log(i);
+    }, 1000 + i);
+}
+```
+
+---
+## 15. Explanation of `console.log(a)` Output in Nested Functions
+
+### Question
+Why does the following code print `0` when `console.log(a)` is executed?
+
+```javascript
+(function fnA(a) {
+    return (function fnB(b) {
+        console.log(a);
+    })(1);
+})(0);
+```
+
+### Code Breakdown
+
+| Function | Parameter | Passed Value | Scope Access     | Explanation                                                               |
+|----------|-----------|--------------|------------------|---------------------------------------------------------------------------|
+| **`fnA`**   | `a`         | `0`          | `fnA` scope       | `fnA` is called with `a = 0`, so `a` is set to `0` in `fnA`'s scope.      |
+| **`fnB`**   | `b`         | `1`          | `fnA` and `fnB` scope | `fnB` is immediately invoked with `b = 1`, and it has access to `a` from `fnA`'s scope.|
+
+#### Explanation
+
+1. **Scope in `fnA`:**  
+   `fnA` is an immediately invoked function that is called with the argument `0`, setting `a` to `0` in the `fnA` function scope.
+
+2. **Nested Scope in `fnB`:**  
+   Inside `fnA`, another function `fnB` is defined and immediately invoked with the argument `1`, setting `b` to `1`. 
+
+3. **Lexical Scoping:**  
+   In `fnB`, `console.log(a)` is called. Due to JavaScript's lexical scoping, `fnB` has access to variables from its parent function `fnA`. Since `a` is `0` in `fnA`, `console.log(a)` outputs `0`.
+
+### Code Summary
+
+```javascript
+// Outer function `fnA` with `a = 0`
+(function fnA(a) {
+    // Inner function `fnB` with `b = 1`
+    return (function fnB(b) {
+        console.log(a); // Outputs: 0
+    })(1);
+})(0);
+```
+---
+
+## 16. JavaScript Expression Evaluation
+
+### Question
+Explain the output of the following expressions in JavaScript:
+```javascript
+console.log(3 > 2 > 1); // false
+console.log(1 + "1" - 1); // 10
+```
+
+### Explanation
+
+| Expression            | Evaluation Process                                       | Output | Explanation                                                                                       |
+|-----------------------|----------------------------------------------------------|--------|---------------------------------------------------------------------------------------------------|
+| **`3 > 2 > 1`**       | `3 > 2` is `true`, so it becomes `true > 1`. Since `true` is `1` in numeric context, `1 > 1` is `false`. | `false` | The comparison is evaluated in two steps due to left-to-right associativity.                      |
+| **`1 + "1" - 1`**     | `1 + "1"` becomes `"11"` (string concatenation). `"11" - 1` is `10` (numeric subtraction). | `10`   | JavaScript converts `"11"` to `11` (number) in the subtraction step.                              |
+
+#### Breakdown of Each Expression
+
+1. **`3 > 2 > 1`:**
+   - JavaScript evaluates `3 > 2` first, which is `true`.
+   - The expression becomes `true > 1`. In numeric context, `true` is converted to `1`.
+   - Thus, `1 > 1` is evaluated, which is `false`.
+
+2. **`1 + "1" - 1`:**
+   - The `+` operator between a number (`1`) and a string (`"1"`) triggers string concatenation, resulting in `"11"`.
+   - The expression becomes `"11" - 1`. The `-` operator coerces `"11"` into a number (`11`), then subtracts `1`, resulting in `10`.
+
+### Additional Examples
+
+| Expression                | Evaluation Process                                               | Output | Explanation                                                                                             |
+|---------------------------|------------------------------------------------------------------|--------|---------------------------------------------------------------------------------------------------------|
+| **`5 < 6 < 7`**           | `5 < 6` is `true`, so `true < 7` becomes `1 < 7`.               | `true` | `1 < 7` is `true`, so the final output is `true`.                                                       |
+| **`6 > 5 > 4`**           | `6 > 5` is `true`, so `true > 4` becomes `1 > 4`.               | `false` | `1 > 4` is `false`, so the final output is `false`.                                                     |
+| **`"5" + 5 - 5`**         | `"5" + 5` becomes `"55"`, then `"55" - 5` becomes `50`.         | `50`   | The `+` triggers string concatenation first, then `-` coerces `"55"` to `55` and subtracts `5`.         |
+| **`10 + "20" + 30`**      | `10 + "20"` becomes `"1020"`, then `"1020" + 30` becomes `"102030"`. | `"102030"` | String concatenation is triggered for both steps since `+` is used with strings.                       |
+
+---
+
+### Question
+Explain the output of the following expressions in JavaScript:
+```javascript
+console.log(["1", "2"] + 90); // 1290
+console.log(["1", "2"] - 90); //NaN
+```
+
+### Explanation
+
+| Expression               | Evaluation Process                                                                 | Output  | Explanation                                                                                       |
+|--------------------------|------------------------------------------------------------------------------------|---------|---------------------------------------------------------------------------------------------------|
+| **`["1", "2"] + 90`**    | `["1", "2"]` converts to the string `"1,2"`, then concatenates with `90`.          | `"1,290"` | The `+` operator with a string triggers string concatenation, resulting in `"1,290"`.             |
+| **`["1", "2"] - 90`**    | `["1", "2"]` converts to the string `"1,2"`, but `-` expects a number, so returns `NaN`. | `NaN`    | The `-` operator cannot convert `"1,2"` to a number, resulting in `NaN` (Not a Number).           |
+
+#### Breakdown of Each Expression
+
+1. **`["1", "2"] + 90`:**
+   - JavaScript converts the array `["1", "2"]` to the string `"1,2"`.
+   - Since `+` is used, JavaScript performs string concatenation, resulting in `"1,290"`.
+
+2. **`["1", "2"] - 90`:**
+   - JavaScript converts `["1", "2"]` to `"1,2"`.
+   - The `-` operator expects both operands to be numbers, so it tries to convert `"1,2"` to a number.
+   - Since `"1,2"` is not a valid number, JavaScript returns `NaN`.
+
+---
+
+### Additional Examples
+
+| Expression               | Evaluation Process                                                                                 | Output     | Explanation                                                                                       |
+|--------------------------|----------------------------------------------------------------------------------------------------|------------|---------------------------------------------------------------------------------------------------|
+| **`3 > 2 > 1`**          | `3 > 2` is `true`, so it becomes `true > 1`. `true` is `1` in numeric context, so `1 > 1` is `false`. | `false`    | Left-to-right evaluation with `>` leads to `1 > 1`, which is `false`.                             |
+| **`1 + "1" - 1`**        | `1 + "1"` becomes `"11"` (string concatenation). `"11" - 1` is `10`.                              | `10`       | JavaScript converts `"11"` to a number (`11`) before performing subtraction.                      |
+| **`5 < 6 < 7`**          | `5 < 6` is `true`, so `true < 7` becomes `1 < 7`.                                                 | `true`     | `1 < 7` evaluates to `true`.                                                                      |
+| **`6 > 5 > 4`**          | `6 > 5` is `true`, so `true > 4` becomes `1 > 4`.                                                 | `false`    | `1 > 4` is `false`.                                                                               |
+| **`"5" + 5 - 5`**        | `"5" + 5` becomes `"55"`, then `"55" - 5` becomes `50`.                                           | `50`       | The `+` operator triggers string concatenation; `-` converts `"55"` to a number.                  |
+| **`10 + "20" + 30`**     | `10 + "20"` becomes `"1020"`, then `"1020" + 30` becomes `"102030"`.                               | `"102030"` | String concatenation is triggered for both steps.                                                 |
+| **`["3"] + 5`**          | `["3"]` becomes `"3"`, so `"3" + 5` is `"35"`.                                                    | `"35"`     | Array `["3"]` converts to `"3"`, then concatenates with `5` as a string.                          |
+| **`["3"] - 5`**          | `["3"]` becomes `"3"`, so `"3" - 5` is `-2`.                                                      | `-2`       | Array `["3"]` converts to `"3"`, then JavaScript performs subtraction (`3 - 5`).                  |
+| **`["text"] + 5`**       | `["text"]` becomes `"text"`, so `"text" + 5` is `"text5"`.                                        | `"text5"`  | String concatenation occurs as JavaScript treats `"text"` as a string.                            |
+| **`["text"] - 5`**       | `["text"]` becomes `"text"`, so `"text" - 5` is `NaN`.                                            | `NaN`      | JavaScript cannot convert `"text"` to a number, so it returns `NaN`.                              |
+
+---
+
+### Summary of Concepts
+
+- **String Concatenation with `+`:**  
+  If any operand is a string or can be converted to one, `+` triggers **string concatenation**.
+
+- **Numeric Operations with `-`:**  
+  The `-` operator only performs numeric subtraction, so if operands cannot be converted to numbers, JavaScript returns `NaN`.
+
+---
